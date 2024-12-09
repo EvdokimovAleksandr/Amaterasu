@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import Form from 'Components/Form/Form'
+import ListTracks from 'Components/ListTracks/ListTracks'
 import Input from 'Components/Input/Input'
 import Sharingan from 'Icons/Sharingan'
 import ItachiPNG from '@/../../public/img/Itachi.png'
@@ -13,13 +13,11 @@ import './index.scss'
 export default function YM() {
   const dispatch = useDispatch()
   const [token, setToken] = useState('')
+  const tracks = useSelector((state) => state.YMReducer.list)
 
   const handleRequestList = () => {
     if (token) {
-      console.log('bef')
-
       dispatch(getListActionYm({ token: token }))
-      console.log('af')
     }
   }
 
@@ -40,7 +38,7 @@ export default function YM() {
           confirmFn={handleRequestList}
         />
         <div className="forms">
-          <Form />
+          <ListTracks list={tracks} />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { GET_LIST_ACTION_YM } from './../../Actions/YMActions'
+import { GET_LIST_ACTION_YM, RESPONSE_LIST_LIKED_YM } from './../../Actions/YMActions'
 
 const initialState = {
   list: [],
@@ -12,6 +12,14 @@ export default function YMReducer(state = initialState, { type, payload }) {
         ...state,
         requestGet: true,
       }
+
+    case RESPONSE_LIST_LIKED_YM:
+      return {
+        ...state,
+        requestGet: false,
+        list: payload,
+      }
+
     default:
       return state
   }
