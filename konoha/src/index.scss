@@ -77,3 +77,21 @@ body {
     background-position: 0% 100%;
   }
 }
+
+@mixin scrollbars(
+  $size-area: 12px,
+  $size-bar: 4px,
+  $foreground-color: rgba(200, 203, 213, 1),
+  $background-color: transparent
+) {
+  // для Chrome и Safari
+  &::-webkit-scrollbar {
+    width: $size-area;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: $size-bar solid $background-color;
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: $foreground-color;
+  }
+}

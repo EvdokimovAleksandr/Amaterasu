@@ -1,10 +1,10 @@
 import React from 'react'
-import Main from 'Pages/Main/Main'
+import YM from 'Pages/YM/YM'
 
 export default function App() {
   return (
     <>
-      <Main />
+      <YM />
     </>
   )
 }

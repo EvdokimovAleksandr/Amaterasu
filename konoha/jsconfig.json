@@ -6,7 +6,8 @@
       "Utils/*": ["Utils/*"],
       "Pages/*": ["Pages/*"],
       "UI/*": ["UI/*"],
-      "Icons/*": ["Icons/*"]
+      "Icons/*": ["Icons/*"],
+      "Redux/*": ["Redux/*"]
     }
   }
 }
