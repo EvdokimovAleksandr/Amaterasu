@@ -1,0 +1,36 @@
+@keyframes spinClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.main-container {
+  .sharingan {
+    border-radius: 50%;
+    position: absolute;
+    left: -155px;
+    top: 10%;
+    animation: spinClockwise 5s linear infinite;
+  }
+
+  .img-container {
+    position: absolute;
+    width: 760px;
+    height: auto;
+    right: -40px;
+    z-index: 1;
+  }
+
+  .forms {
+    margin: auto;
+    width: 60%;
+    padding-top: 100px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    z-index: 2;
+  }
+}
