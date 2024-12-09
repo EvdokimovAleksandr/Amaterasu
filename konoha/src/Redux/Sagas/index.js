@@ -1,9 +1,9 @@
 import { all } from 'redux-saga/effects'
-import YMWatcher from './YMWatcher/YMWatcher.js'
+import { YMWatcher } from './YMWatcher/YMWatcher'
 
 export default function* rootSaga() {
   console.log(123)
   // debugger
 
-  all([YMWatcher])
+  yield all([YMWatcher()])
 }
