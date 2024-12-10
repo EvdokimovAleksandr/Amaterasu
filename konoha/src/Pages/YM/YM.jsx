@@ -9,6 +9,9 @@ import ItachiPNG from '@/../../public/img/Itachi.png'
 import { getListActionYm } from './../../Redux/Actions/YMActions'
 
 import './index.scss'
+import YandexMusicLogo from 'Icons/YandexMusicLogo'
+import SpotifyLogo from 'Icons/SpotifyLogo'
+import Arrow from 'Icons/Arrow'
 
 export default function YM() {
   const dispatch = useDispatch()
@@ -30,7 +33,6 @@ export default function YM() {
         <img src={ItachiPNG} alt="" />
       </div>
       <div className="wrapper-form">
-        
         <Field
           cssName={'input-token'}
           value={token}
@@ -39,6 +41,17 @@ export default function YM() {
           confirmFn={handleRequestList}
         />
         <div className="forms">
+          <div className="services-container">
+            <div className="first-service">
+              <YandexMusicLogo />
+            </div>
+            <div className="arrow">
+              <Arrow />
+            </div>
+            <div className="second-service">
+              <SpotifyLogo />
+            </div>
+          </div>
           <ListTracks list={tracks} />
         </div>
       </div>

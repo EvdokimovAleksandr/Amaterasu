@@ -35,16 +35,54 @@
     z-index: 3;
     display: flex;
     flex-direction: column;
-    align-items: center; 
+    align-items: center;
   }
 
   .forms {
     margin: auto;
     margin-top: 64px;
     width: 60%;
+    max-width: 700px;
     position: relative;
     display: flex;
     justify-content: space-around;
+    align-items: center;
     z-index: 2;
+
+    .services-container {
+      width: 160px;
+      height: 330px;
+      background-color: grey;
+      opacity: 0.8;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+
+      .arrow {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background-color: grey;
+        opacity: 1;
+      }
+
+      .first-service,
+      .second-service {
+        width: 100px;
+        height: 100px;
+        background-color: silver;
+        border-radius: 8px;
+        transition: all 0.5s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: white;
+          opacity: 1;
+        }
+      }
+    }
   }
 }
