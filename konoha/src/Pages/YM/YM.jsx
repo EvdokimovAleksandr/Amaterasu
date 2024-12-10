@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import ListTracks from 'Components/ListTracks/ListTracks'
-import Input from 'Components/Input/Input'
+import Field from 'Components/Field/Field'
 import Sharingan from 'Icons/Sharingan'
 import ItachiPNG from '@/../../public/img/Itachi.png'
 
@@ -30,7 +30,8 @@ export default function YM() {
         <img src={ItachiPNG} alt="" />
       </div>
       <div className="wrapper-form">
-        <Input
+        
+        <Field
           cssName={'input-token'}
           value={token}
           setValue={setToken}
