@@ -1,3 +1,5 @@
+@import './../../index.scss';
+
 .tooltip-wrapper {
   position: relative;
   display: inline-block;
@@ -12,7 +14,7 @@
   bottom: 100%; /* Позиция над элементом */
   left: 50%;
   transform: translateX(-50%);
-  background-color: #333;
+  background-color: $akatsuki-light-black;
   color: #fff;
   padding: 8px 12px;
   border-radius: 4px;
