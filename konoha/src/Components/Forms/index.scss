@@ -1,12 +1,17 @@
+@import './../../index.scss';
+
 .container-input {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  align-items: center;
+  justify-content: center;
 
   .text-for-input {
-    color: white;
+    color: $akatsuki-black;
     margin-bottom: 6px;
   }
 
@@ -20,6 +25,7 @@
       background-color: white;
       border-radius: 8px;
       margin-right: 8px;
+      border: 1px $akatsuki-red solid;
     }
 
     .button-input {
@@ -28,21 +34,21 @@
       height: 32px;
       border-radius: 6px;
       border: 1px solid rgb(174, 0, 0);
-      background-color: black;
-      color: red;
+      background-color: $akatsuki-black;
+      color: $akatsuki-red;
       transition: all 0.5s ease;
 
       &:hover {
-        background-color: red;
-        color: black;
+        background-color: $akatsuki-red;
+        color: $akatsuki-light-black;
       }
 
       &.clicked {
         animation: spin 2s ease-out;
 
         // Плавное возвращение в исходное состояние
-        background-color: black;
-        color: red;
+        background-color: $akatsuki-light-black;
+        color: $akatsuki-red;
       }
     }
 
@@ -60,6 +66,9 @@
     display: flex;
     align-items: center;
     column-gap: 8px;
+    // border: 1px $akatsuki-red solid;
+    border-radius: 6px;
+
     .help-note {
       cursor: pointer;
     }

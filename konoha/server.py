@@ -2,9 +2,14 @@ import asyncio
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from yandex_music import ClientAsync
+import requests
 
 app = Flask(__name__)
 CORS(app)
+
+# =============================
+# API для работы с Яндекс Музыкой
+# =============================
 
 # Маршрут для получения понравившихся треков
 @app.route('/api/liked_tracks', methods=['GET'])
@@ -37,6 +42,94 @@ async def fetch_liked_tracks(token):
             results.append({'title': title, 'artists': artists})
     return results
 
+# =============================
+# API для работы с Spotify
+# =============================
+
+CLIENT_ID = '54e94f78b3704be5b0e7c5ad5d57a8db'
+CLIENT_SECRET = '074d749de3df441a8f6e6bc5278258d3'
+REDIRECT_URI = 'http://localhost:8000/spotify'
+
+# Получение Access Token через OAuth
+@app.route('/api/get_access_token', methods=['POST'])
+def get_access_token():
+    data = request.json
+    auth_code = data.get('auth_code')
+
+    if not auth_code:
+        return jsonify({'error': 'Missing authorization code'}), 400
+
+    url = "https://accounts.spotify.com/api/token"
+    payload = {
+        "grant_type": "authorization_code",
+        "code": auth_code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
+    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+    try:
+        response = requests.post(url, data=payload, headers=headers)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 400
+
+# Создание нового плейлиста
+@app.route('/api/create_playlist', methods=['POST'])
+def create_playlist():
+    data = request.json
+    user_id = data.get('user_id')
+    playlist_name = data.get('playlist_name')
+    description = data.get('description', '')
+    token = request.headers.get('Authorization')
+
+    if not (user_id and playlist_name and token):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+    payload = {
+        "name": playlist_name,
+        "description": description,
+        "public": False
+    }
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 400
+
+# Добавление треков в плейлист
+@app.route('/api/add_tracks', methods=['POST'])
+def add_tracks():
+    data = request.json
+    playlist_id = data.get('playlist_id')
+    tracks = data.get('tracks')
+    token = request.headers.get('Authorization')
+
+    if not (playlist_id and tracks and token):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    payload = {"uris": tracks}
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        return jsonify({'message': 'Tracks added successfully'})
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

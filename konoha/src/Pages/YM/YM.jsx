@@ -1,31 +1,33 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import ListTracks from 'Components/ListTracks/ListTracks'
-import Field from 'Components/Field/Field'
 import Sharingan from 'Icons/Sharingan'
 import ItachiPNG from '@/../../public/img/Itachi.png'
-
-import { getListActionYm } from './../../Redux/Actions/YMActions'
-
-import './index.scss'
 import YandexMusicLogo from 'Icons/YandexMusicLogo'
 import SpotifyLogo from 'Icons/SpotifyLogo'
 import Arrow from 'Icons/Arrow'
+import ModalForAuth from 'Components/ModalForAuth/ModalForAuth'
+
+import { changeAuth } from 'Components/Forms'
+
+import './index.scss'
 
 export default function YM() {
-  const dispatch = useDispatch()
-  const [token, setToken] = useState('')
+  const [activeAuth, setActiveAuth] = useState('')
+  const [openAuth, setOpenAuth] = useState(false)
   const tracks = useSelector((state) => state.YMReducer.list)
 
-  const handleRequestList = () => {
-    if (token) {
-      dispatch(getListActionYm({ token: token }))
-    }
+  const handleOpenAuth = (service) => {
+    setActiveAuth(service)
+    setOpenAuth(true)
   }
 
   return (
     <div className="main-container">
+      <ModalForAuth open={openAuth} closeFn={() => setOpenAuth(false)}>
+        {changeAuth(activeAuth)}
+      </ModalForAuth>
       <div className="sharingan">
         <Sharingan />
       </div>
@@ -33,22 +35,15 @@ export default function YM() {
         <img src={ItachiPNG} alt="" />
       </div>
       <div className="wrapper-form">
-        <Field
-          cssName={'input-token'}
-          value={token}
-          setValue={setToken}
-          placeholder={'Введите свой токен я.музыки'}
-          confirmFn={handleRequestList}
-        />
         <div className="forms">
           <div className="services-container">
-            <div className="first-service">
+            <div className="first-service" onClick={() => handleOpenAuth('yandex')}>
               <YandexMusicLogo />
             </div>
             <div className="arrow">
               <Arrow />
             </div>
-            <div className="second-service">
+            <div className="second-service" onClick={() => handleOpenAuth('spotify')}>
               <SpotifyLogo />
             </div>
           </div>

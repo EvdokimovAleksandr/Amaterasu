@@ -1,13 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Tooltip from 'Components/Tooltip/Tooltip'
 import QuestionIcon from 'Icons/QuestionIcon'
 
+import { getListActionYm } from './../../Redux/Actions/YMActions'
+
 import './index.scss'
 
-export default function Field({ cssName, value, setValue, placeholder, confirmFn = () => null }) {
+export default function Field({ confirmFn = () => null }) {
+  const dispatch = useDispatch()
+  const [token, setToken] = useState('')
+
+  const handleRequestList = () => {
+    if (token) {
+      dispatch(getListActionYm({ token: token }))
+    }
+  }
+
+  //   ;<Field
+  //     cssName={'input-token'}
+  //     value={token}
+  //     setValue={setToken}
+  //     placeholder={'Введите свой токен я.музыки'}
+  //     confirmFn={handleRequestList}
+  //   />
+
   const handleClick = (e) => {
-    confirmFn()
+    handleRequestList()
     e.target.classList.add('clicked')
 
     // Удаляем класс через 2 секунды (время анимации)
@@ -19,7 +39,7 @@ export default function Field({ cssName, value, setValue, placeholder, confirmFn
   return (
     <div className="container-input">
       <div className="wrapper-help">
-        <span className="text-for-input">{placeholder}</span>
+        <span className="text-for-input">Введите свой токен я.музыки</span>
         <div className="help-note">
           <Tooltip
             text="О том как получить токен читайте в"
@@ -31,7 +51,7 @@ export default function Field({ cssName, value, setValue, placeholder, confirmFn
         </div>
       </div>
       <div className="wrapper-input">
-        <input className={`${cssName} custom-input`} value={value} onChange={(e) => setValue(e.target.value)} />
+        <input className={`input-token custom-input`} value={token} onChange={(e) => setToken(e.target.value)} />
         <button className="button-input" onClick={handleClick}>
           Поехали
         </button>

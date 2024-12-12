@@ -78,6 +78,10 @@ body {
   }
 }
 
+$akatsuki-red: rgba(155, 61, 75, 255);
+$akatsuki-light-black: rgba(44,55,59,255);
+$akatsuki-black: rgba(14,15,17,255);
+
 @mixin scrollbars(
   $size-area: 12px,
   $size-bar: 4px,
