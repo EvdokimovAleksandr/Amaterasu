@@ -1,6 +1,6 @@
 @import './../../index.scss';
 
-.container-input {
+.auth-ym {
   width: 100%;
   height: 100%;
   display: flex;
@@ -27,39 +27,6 @@
       margin-right: 8px;
       border: 1px $akatsuki-red solid;
     }
-
-    .button-input {
-      cursor: pointer;
-      width: 100px;
-      height: 32px;
-      border-radius: 6px;
-      border: 1px solid rgb(174, 0, 0);
-      background-color: $akatsuki-black;
-      color: $akatsuki-red;
-      transition: all 0.5s ease;
-
-      &:hover {
-        background-color: $akatsuki-red;
-        color: $akatsuki-light-black;
-      }
-
-      &.clicked {
-        animation: spin 2s ease-out;
-
-        // Плавное возвращение в исходное состояние
-        background-color: $akatsuki-light-black;
-        color: $akatsuki-red;
-      }
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(-360deg);
-      }
-    }
   }
 
   .wrapper-help {
@@ -71,6 +38,47 @@
 
     .help-note {
       cursor: pointer;
+    }
+  }
+}
+
+.auth-spotify {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
+
+    border-radius: 6px;
+    background-color: $akatsuki-black;
+
+    .input-auth {
+      border-radius: 6px;
+      background-color: white;
+      padding: 4px;
+    }
+
+    .password-wrapper {
+      position: relative;
+
+      .toggle-password-btn {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+      }
     }
   }
 }

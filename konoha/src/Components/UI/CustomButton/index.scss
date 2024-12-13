@@ -1,0 +1,34 @@
+@import './../../../index.scss';
+
+.custom-button {
+  cursor: pointer;
+  padding: 6px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgb(174, 0, 0);
+  background-color: $akatsuki-black;
+  color: $akatsuki-red;
+  transition: all 0.5s ease;
+
+  &:hover {
+    background-color: $akatsuki-red;
+    color: $akatsuki-light-black;
+  }
+
+  &.clicked {
+    animation: spin 2s ease-out;
+
+    // Плавное возвращение в исходное состояние
+    background-color: $akatsuki-light-black;
+    color: $akatsuki-red;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}

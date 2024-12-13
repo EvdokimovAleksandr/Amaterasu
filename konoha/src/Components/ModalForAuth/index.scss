@@ -1,3 +1,5 @@
+@import './../../index.scss';
+
 .modal-backdrop {
   position: absolute;
   width: 100%;
@@ -14,15 +16,16 @@
       right: -65px;
       background-color: white;
       color: black;
+      transition: all 0.5s ease;
       cursor: pointer;
 
       &:hover {
-        background-color: grey;
+        background-color: $akatsuki-light-black;
       }
     }
 
-    width: 700px;
-    height: 460px;
+    width: 400px;
+    height: 360px;
     position: absolute;
     top: 50%;
     left: 50%;
