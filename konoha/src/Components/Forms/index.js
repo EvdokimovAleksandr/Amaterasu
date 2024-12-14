@@ -1,4 +1,4 @@
-import AuthSpotify from './AuthSpotify'
+import AuthSpotify from './AuthSpotify/AuthSpotify'
 import AuthYM from './AuthYM'
 
 export const authForms = {
