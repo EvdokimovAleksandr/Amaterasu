@@ -42,6 +42,18 @@
   }
 }
 
+@property --bg-angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: '<angle>';
+}
+
+@keyframes spin {
+  to {
+    --bg-angle: 360deg;
+  }
+}
+
 .auth-spotify {
   width: 100%;
   height: 100%;
@@ -49,6 +61,40 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .auth-link-spotify {
+    width: 57%;
+    padding: 6px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    animation: spin 2.5s infinite linear paused;
+    background: linear-gradient(
+          to bottom,
+          rgba(155, 61, 75, 0.95),
+          rgba(155, 61, 75, 0.8),
+          rgba(44, 55, 59, 0.8),
+          rgba(44, 55, 59, 0.95)
+        )
+        padding-box,
+      conic-gradient(
+          from var(--bg-angle),
+          rgba(155, 61, 75, 1) 0%,
+          rgba(155, 61, 75, 0.8) 15%,
+          rgba(44, 55, 59, 0.8) 40%,
+          rgba(44, 55, 59, 1) 60%,
+          rgba(14, 15, 17, 0.8) 75%,
+          rgba(14, 15, 17, 1) 100%
+        )
+        border-box;
+    border: 6px solid transparent;
+
+    color: white;
+    border: 6px solid transparent;
+
+    &:hover {
+      animation-play-state: running;
+    }
+  }
 
   .form-wrapper {
     display: flex;

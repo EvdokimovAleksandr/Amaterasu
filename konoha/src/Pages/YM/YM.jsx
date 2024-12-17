@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import ListTracks from 'Components/ListTracks/ListTracks'
 import Sharingan from 'Icons/Sharingan'
@@ -9,11 +9,14 @@ import SpotifyLogo from 'Icons/SpotifyLogo'
 import Arrow from 'Icons/Arrow'
 import ModalForAuth from 'Components/ModalForAuth/ModalForAuth'
 
+import { handleAuthCallback } from 'Api/ApiSpotify/AUTH-spotify'
 import { changeAuth } from 'Components/Forms'
 
 import './index.scss'
 
 export default function YM() {
+  const dispatch = useDispatch()
+  const queryParams = new URLSearchParams(window.location.search)
   const [activeAuth, setActiveAuth] = useState('')
   const [openAuth, setOpenAuth] = useState(false)
   const tracks = useSelector((state) => state.YMReducer.list)
@@ -22,6 +25,12 @@ export default function YM() {
     setActiveAuth(service)
     setOpenAuth(true)
   }
+
+  useEffect(() => {
+    if (queryParams.get('code')) {
+      handleAuthCallback(queryParams.get('code'))
+    }
+  }, [window.location.search])
 
   return (
     <div className="main-container">

@@ -7,7 +7,5 @@ export const authForms = {
 }
 
 export const changeAuth = (condition) => {
-  console.log(condition)
-
   return authForms[condition]
 }
