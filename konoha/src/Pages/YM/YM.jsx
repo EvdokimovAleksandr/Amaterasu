@@ -10,13 +10,14 @@ import Arrow from 'Icons/Arrow'
 import ModalForAuth from 'Components/ModalForAuth/ModalForAuth'
 
 import { handleAuthCallback } from 'Api/ApiSpotify/AUTH-spotify'
+import { successAuthSpotify } from './../../Redux/Actions/SpotifyActions'
 import { changeAuth } from 'Components/Forms'
 
 import './index.scss'
 
 export default function YM() {
   const dispatch = useDispatch()
-  const queryParams = new URLSearchParams(window.location.search)
+  const spotifyData = JSON.parse(localStorage.getItem('spotifyData'))
   const [activeAuth, setActiveAuth] = useState('')
   const [openAuth, setOpenAuth] = useState(false)
   const tracks = useSelector((state) => state.YMReducer.list)
@@ -27,10 +28,17 @@ export default function YM() {
   }
 
   useEffect(() => {
-    if (queryParams.get('code')) {
-      handleAuthCallback(queryParams.get('code'))
+    const queryParams = new URLSearchParams(window.location.search)
+    const code = queryParams.get('code')
+
+    if (code) {
+      handleAuthCallback(code)
     }
-  }, [window.location.search])
+
+    if (spotifyData) {
+      dispatch(successAuthSpotify(spotifyData))
+    }
+  }, [])
 
   return (
     <div className="main-container">

@@ -5,9 +5,9 @@ import Tooltip from 'Components/Tooltip/Tooltip'
 import QuestionIcon from 'Icons/QuestionIcon'
 import CustomButton from 'Components/UI/CustomButton/CustomButton'
 
-import { getListActionYm } from './../../Redux/Actions/YMActions'
+import { getListActionYm } from '../../../Redux/Actions/YMActions'
 
-import './index.scss'
+import '../index.scss'
 
 export default function Field({ confirmFn = () => null }) {
   const dispatch = useDispatch()

@@ -1,5 +1,5 @@
 import AuthSpotify from './AuthSpotify/AuthSpotify'
-import AuthYM from './AuthYM'
+import AuthYM from './AuthYM/AuthYM'
 
 export const authForms = {
   spotify: <AuthSpotify />,

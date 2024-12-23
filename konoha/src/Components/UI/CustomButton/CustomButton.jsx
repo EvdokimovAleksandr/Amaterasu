@@ -2,7 +2,7 @@ import React from 'react'
 
 import './index.scss'
 
-export default function CustomButton({ onClickFn = () => null, label = '' }) {
+export default function CustomButton({ onClickFn = () => null, label = '', disbale = false }) {
   const handleClick = (e) => {
     onClickFn()
     e.target.classList.add('clicked')
@@ -14,7 +14,7 @@ export default function CustomButton({ onClickFn = () => null, label = '' }) {
   }
 
   return (
-    <button className="custom-button" onClick={handleClick}>
+    <button className="custom-button" onClick={handleClick} disabled={disbale}>
       {label}
     </button>
   )

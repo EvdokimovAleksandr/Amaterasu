@@ -48,9 +48,8 @@ async def fetch_liked_tracks(token):
 
 CLIENT_ID = '54e94f78b3704be5b0e7c5ad5d57a8db'
 CLIENT_SECRET = '074d749de3df441a8f6e6bc5278258d3'
-REDIRECT_URI = 'http://localhost:8000/spotify'
+REDIRECT_URI = 'http://localhost:3000/callback'
 
-# Получение Access Token через OAuth
 @app.route('/api/get_access_token', methods=['POST'])
 def get_access_token():
     data = request.json
@@ -70,10 +69,22 @@ def get_access_token():
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
+        # Логирование запроса
+        app.logger.info(f"Request URL: {url}")
+        app.logger.info(f"Payload: {payload}")
+        app.logger.info(f"Headers: {headers}")
+
         response = requests.post(url, data=payload, headers=headers)
+
+        # Логирование ответа
+        app.logger.info(f"Response status code: {response.status_code}")
+        app.logger.info(f"Response text: {response.text}")
+
         response.raise_for_status()
         return jsonify(response.json())
     except requests.exceptions.RequestException as e:
+        # Логирование ошибки
+        app.logger.error(f"Request failed: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 # Создание нового плейлиста

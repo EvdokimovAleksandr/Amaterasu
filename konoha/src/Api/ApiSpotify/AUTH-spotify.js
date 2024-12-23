@@ -13,16 +13,25 @@ export const startSpotifyAuth = () => {
   window.location.href = authUrl
 }
 
-export const handleAuthCallback = (code) => {
-  console.log(code)
+export const handleAuthCallback = async (code) => {
   if (code) {
     try {
       // Отправляем `auth_code` на сервер для обмена на токен
-      const response = api.post('api/get_access_token', {
+      const response = await api.post('api/get_access_token', {
         auth_code: code,
       })
 
-      // Очищаем строку запроса
+      // Сохраняем данные в localStorage
+      const spotifyData = {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        expiresIn: response.data.expires_in,
+        scope: response.data.scope,
+        tokenType: response.data.token_type,
+      }
+      localStorage.setItem('spotifyData', JSON.stringify(spotifyData))
+
+      // Очищаем строку запроса после успешного обмена
       window.history.replaceState({}, document.title, '/')
     } catch (error) {
       console.error('Ошибка при получении токена доступа:', error)
