@@ -1,7 +1,7 @@
 import { call, takeLatest } from 'redux-saga/effects'
 
-import { GET_LIST_ACTION_YM, responseListLikedYm } from './../../Actions/YMActions'
-import { POST_TRANSFER_TO_SPOTIFY } from './../../Actions/SpotifyActions'
+import { GET_LIST_ACTION_YM, responseListLikedYm } from '../../Actions/YMActions'
+import { POST_TRANSFER_TO_SPOTIFY } from '../../Actions/SpotifyActions'
 
 import { postRequestSpotifyAddTracks } from 'Api/ApiSpotify/POST-tracks'
 

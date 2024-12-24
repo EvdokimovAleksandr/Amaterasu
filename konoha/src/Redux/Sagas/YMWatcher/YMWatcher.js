@@ -7,6 +7,9 @@ function* getListYMWorker(action) {
     const data = yield call(getRequestLikeTracksYM, action.payload)
 
     if (data.status === 200) {
+      if (data?.data.liked_tracks) {
+        localStorage.setItem('tracks', JSON.stringify(data?.data.liked_tracks))
+      }
       yield put(responseListLikedYm(data?.data.liked_tracks))
     }
   } catch (error) {
