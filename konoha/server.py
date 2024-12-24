@@ -3,6 +3,17 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from yandex_music import ClientAsync
 import requests
+import time
+
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,  # Устанавливаем уровень логирования
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler()  # Логи выводятся в терминал
+    ]
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -87,60 +98,105 @@ def get_access_token():
         app.logger.error(f"Request failed: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
-# Создание нового плейлиста
-@app.route('/api/create_playlist', methods=['POST'])
-def create_playlist():
+
+@app.route('/api/create_playlist_with_tracks', methods=['POST'])
+def create_playlist_with_tracks():
     data = request.json
-    user_id = data.get('user_id')
     playlist_name = data.get('playlist_name')
-    description = data.get('description', '')
+    tracks = data.get('tracks')  # Список объектов { "title": "Song Title", "artists": "Artist Name" }
     token = request.headers.get('Authorization')
 
-    if not (user_id and playlist_name and token):
+    if not (playlist_name and tracks and token):
+        logging.error("Missing required fields: playlist_name=%s, tracks=%s, token=%s", playlist_name, tracks, token)
         return jsonify({'error': 'Missing required fields'}), 400
 
-    url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
-    payload = {
+    logging.info("ТОКЕН: %s", token)
+
+    # 1. Получить ID пользователя
+    user_url = "https://api.spotify.com/v1/me"
+    headers = {"Authorization": f"Bearer {token}"}
+
+    try:
+        logging.info("Fetching user ID from Spotify...")
+        user_response = requests.get(user_url, headers=headers)
+        user_response.raise_for_status()
+        user_id = user_response.json().get('id')
+        logging.info("User ID fetched successfully: %s", user_id)
+        if not user_id:
+            logging.error("Failed to fetch user ID: response=%s", user_response.json())
+            return jsonify({'error': 'Failed to fetch user ID'}), 400
+    except requests.exceptions.RequestException as e:
+        logging.error("Error fetching user ID: %s", str(e))
+        return jsonify({'error': f'Failed to get user ID: {str(e)}'}), 400
+
+    # 2. Поиск URI треков
+    search_url = "https://api.spotify.com/v1/search"
+    track_uris = []
+
+    for track in tracks:
+        query = f"{track['title']} artist:{track['artists']}"
+        params = {
+            'q': query,
+            'type': 'track',
+            'limit': 1
+        }
+
+        try:
+            logging.info("Searching for track: %s by %s", track['title'], track['artists'])
+            search_response = requests.get(search_url, headers=headers, params=params)
+            search_response.raise_for_status()
+            results = search_response.json().get('tracks', {}).get('items', [])
+            if results:
+                track_uri = results[0]['uri']
+                track_uris.append(track_uri)
+                logging.info("Track found: %s", track_uri)
+            else:
+                logging.warning("No results found for track: %s by %s", track['title'], track['artists'])
+        except requests.exceptions.RequestException as e:
+            logging.error("Error searching for track %s by %s: %s", track['title'], track['artists'], str(e))
+            continue  # Переходим к следующему треку
+
+        time.sleep(0.1)  # Минимизируем риск превышения лимита запросов
+
+    if not track_uris:
+        logging.error("No tracks found for the given input.")
+        return jsonify({'error': 'No tracks found for the given input'}), 400
+
+    # 3. Создать плейлист
+    playlist_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+    playlist_payload = {
         "name": playlist_name,
-        "description": description,
+        "description": "Created via Spotify API with search",
         "public": False
     }
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
 
     try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        return jsonify(response.json())
+        logging.info("Creating playlist: %s", playlist_name)
+        playlist_response = requests.post(playlist_url, json=playlist_payload, headers=headers)
+        playlist_response.raise_for_status()
+        playlist_id = playlist_response.json().get('id')
+        logging.info("Playlist created successfully: ID=%s", playlist_id)
+        if not playlist_id:
+            logging.error("Failed to create playlist: response=%s", playlist_response.json())
+            return jsonify({'error': 'Failed to create playlist'}), 400
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error creating playlist: %s", str(e))
+        return jsonify({'error': f'Failed to create playlist: {str(e)}'}), 400
 
-# Добавление треков в плейлист
-@app.route('/api/add_tracks', methods=['POST'])
-def add_tracks():
-    data = request.json
-    playlist_id = data.get('playlist_id')
-    tracks = data.get('tracks')
-    token = request.headers.get('Authorization')
-
-    if not (playlist_id and tracks and token):
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
-    payload = {"uris": tracks}
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    # 4. Добавить треки в плейлист
+    add_tracks_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    add_tracks_payload = {"uris": track_uris}
 
     try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        return jsonify({'message': 'Tracks added successfully'})
+        logging.info("Adding tracks to playlist: %s", playlist_id)
+        add_tracks_response = requests.post(add_tracks_url, json=add_tracks_payload, headers=headers)
+        add_tracks_response.raise_for_status()
+        logging.info("Tracks added successfully to playlist: %s", playlist_id)
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error adding tracks to playlist: %s", str(e))
+        return jsonify({'error': f'Failed to add tracks: {str(e)}'}), 400
+
+    return jsonify({'message': 'Playlist created and tracks added successfully', 'playlist_id': playlist_id})
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

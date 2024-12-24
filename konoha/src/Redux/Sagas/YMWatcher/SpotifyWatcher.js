@@ -1,5 +1,9 @@
-import { takeLatest } from 'redux-saga/effects'
+import { call, takeLatest } from 'redux-saga/effects'
+
 import { GET_LIST_ACTION_YM, responseListLikedYm } from './../../Actions/YMActions'
+import { POST_TRANSFER_TO_SPOTIFY } from './../../Actions/SpotifyActions'
+
+import { postRequestSpotifyAddTracks } from 'Api/ApiSpotify/POST-tracks'
 
 function* AuthSpotifyWorker(action) {
   try {
@@ -12,6 +16,15 @@ function* AuthSpotifyWorker(action) {
   }
 }
 
+function* TransferToSpotifyWorker(action) {
+  try {
+    const response = yield call(postRequestSpotifyAddTracks, action.payload)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export function* SpotifyWatcher() {
   yield takeLatest(GET_LIST_ACTION_YM, AuthSpotifyWorker)
+  yield takeLatest(POST_TRANSFER_TO_SPOTIFY, TransferToSpotifyWorker)
 }

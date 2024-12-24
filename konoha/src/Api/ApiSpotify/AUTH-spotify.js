@@ -2,7 +2,13 @@ import api from 'Api/api'
 
 const CLIENT_ID = '54e94f78b3704be5b0e7c5ad5d57a8db'
 const REDIRECT_URI = 'http://localhost:3000/callback'
-const SCOPES = ['playlist-modify-private', 'playlist-modify-public'].join(' ')
+const SCOPES = [
+  'playlist-modify-private',
+  'playlist-modify-public',
+  'user-read-private',
+  'user-read-email',
+  'user-library-read',
+].join(' ')
 
 export const startSpotifyAuth = () => {
   const authUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(

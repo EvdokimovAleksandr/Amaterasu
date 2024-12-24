@@ -10,13 +10,20 @@ export default function AuthSpotify() {
   const dispatch = useDispatch()
   const [namePlaylist, setNamePlaylist] = useState('')
   const spotifyData = useSelector((state) => state.SpotifyReducer.headersSpotify)
+  const tracks = useSelector((state) => state.YMReducer.list)
   const handleAuth = () => {
     startSpotifyAuth()
   }
-  console.log(spotifyData)
 
   const handleTransfer = () => {
-    dispatch(postTransferToSpotify())
+    const query = {
+      tracks: tracks,
+      playlistName: namePlaylist,
+      accessToken: spotifyData?.accessToken,
+    }
+    console.log(tracks, spotifyData, namePlaylist)
+
+    if (tracks.length && spotifyData?.accessToken && namePlaylist) dispatch(postTransferToSpotify(query))
   }
 
   return (
