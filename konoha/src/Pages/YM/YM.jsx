@@ -10,10 +10,12 @@ import Arrow from 'Icons/Arrow'
 import ModalForAuth from 'Components/ModalForAuth/ModalForAuth'
 
 import { handleAuthCallback } from 'Api/ApiSpotify/AUTH-spotify'
-import { successAuthSpotify } from './../../Redux/Actions/SpotifyActions'
+import { clearDataSpotify, successAuthSpotify } from './../../Redux/Actions/SpotifyActions'
+import { clearDataYm, responseListLikedYm } from './../../Redux/Actions/YMActions'
 import { changeAuth } from 'Components/Forms'
 
 import './index.scss'
+import CustomButton from 'Components/UI/CustomButton/CustomButton'
 
 export default function YM() {
   const dispatch = useDispatch()
@@ -27,18 +29,30 @@ export default function YM() {
     setOpenAuth(true)
   }
 
+  const handleClearStore = () => {
+    localStorage.removeItem('tracks')
+    localStorage.removeItem('spotifyData')
+    dispatch(clearDataSpotify())
+    dispatch(clearDataYm())
+  }
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
     const code = queryParams.get('code')
+    const tracksFromStroage = JSON.parse(localStorage.getItem('tracks'))
 
     if (code) {
       handleAuthCallback(code)
     }
 
-    if (spotifyData) {
-      dispatch(successAuthSpotify(spotifyData))
+    if (tracksFromStroage) {
+      dispatch(responseListLikedYm(tracksFromStroage))
     }
   }, [])
+
+  if (spotifyData) {
+    dispatch(successAuthSpotify(spotifyData))
+  }
 
   return (
     <div className="main-container">
@@ -63,6 +77,7 @@ export default function YM() {
             <div className="second-service" onClick={() => handleOpenAuth('spotify')}>
               <SpotifyLogo />
             </div>
+            <CustomButton label="Очистить данные" onClickFn={handleClearStore} />
           </div>
           <ListTracks list={tracks} />
         </div>

@@ -51,8 +51,6 @@
     z-index: 2;
 
     .services-container {
-      width: 160px;
-      height: 330px;
       background-color: grey;
       opacity: 0.8;
       border-radius: 8px;
@@ -60,7 +58,7 @@
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 0;
+      padding: 8px;
 
       .arrow {
         width: 70px;
@@ -72,6 +70,7 @@
 
       .first-service,
       .second-service {
+        margin: 8px 0;
         width: 100px;
         height: 100px;
         background-color: silver;

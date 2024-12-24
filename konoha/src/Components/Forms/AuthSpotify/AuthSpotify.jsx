@@ -12,6 +12,9 @@ export default function AuthSpotify() {
   const spotifyData = useSelector((state) => state.SpotifyReducer.headersSpotify)
   const tracks = useSelector((state) => state.YMReducer.list)
   const handleAuth = () => {
+    if (tracks.length) {
+      localStorage.setItem('tracks', JSON.stringify(tracks))
+    }
     startSpotifyAuth()
   }
 

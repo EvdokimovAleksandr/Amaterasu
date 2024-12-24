@@ -1,7 +1,6 @@
-import { POST_TRANSFER_TO_SPOTIFY, SUCCESS_AUTH_SPOTIFY } from './../../Actions/SpotifyActions'
+import { CLEAR_DATA_SPOTIFY, POST_TRANSFER_TO_SPOTIFY, SUCCESS_AUTH_SPOTIFY } from './../../Actions/SpotifyActions'
 
 const initialState = {
-  list: [],
   headersSpotify: null,
   authRequest: false,
   postRequest: false,
@@ -21,6 +20,12 @@ export default function SpotifyReducer(state = initialState, { type, payload }) 
       return {
         ...state,
         postRequest: true,
+      }
+
+    case CLEAR_DATA_SPOTIFY:
+      return {
+        ...state,
+        headersSpotify: null,
       }
 
     default:

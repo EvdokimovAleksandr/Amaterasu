@@ -128,8 +128,30 @@ def create_playlist_with_tracks():
     except requests.exceptions.RequestException as e:
         logging.error("Error fetching user ID: %s", str(e))
         return jsonify({'error': f'Failed to get user ID: {str(e)}'}), 400
+    
+    # 2. Создать плейлист
+    playlist_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+    playlist_payload = {
+        "name": playlist_name,
+        "description": "Created via Spotify API with search",
+        "public": False
+    }
 
-    # 2. Поиск URI треков
+    try:
+        logging.info("Creating playlist: %s", playlist_name)
+        playlist_response = requests.post(playlist_url, json=playlist_payload, headers=headers)
+        playlist_response.raise_for_status()
+        playlist_id = playlist_response.json().get('id')
+        logging.info("Playlist created successfully: ID=%s", playlist_id)
+        if not playlist_id:
+            logging.error("Failed to create playlist: response=%s", playlist_response.json())
+            return jsonify({'error': 'Failed to create playlist'}), 400
+    except requests.exceptions.RequestException as e:
+        logging.error("Error creating playlist: %s", str(e))
+        return jsonify({'error': f'Failed to create playlist: {str(e)}'}), 400
+
+
+    # 3. Поиск URI треков
     search_url = "https://api.spotify.com/v1/search"
     track_uris = []
 
@@ -156,33 +178,13 @@ def create_playlist_with_tracks():
             logging.error("Error searching for track %s by %s: %s", track['title'], track['artists'], str(e))
             continue  # Переходим к следующему треку
 
-        time.sleep(0.1)  # Минимизируем риск превышения лимита запросов
+        # time.sleep(0.1)  # Минимизируем риск превышения лимита запросов
 
     if not track_uris:
         logging.error("No tracks found for the given input.")
         return jsonify({'error': 'No tracks found for the given input'}), 400
 
-    # 3. Создать плейлист
-    playlist_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
-    playlist_payload = {
-        "name": playlist_name,
-        "description": "Created via Spotify API with search",
-        "public": False
-    }
-
-    try:
-        logging.info("Creating playlist: %s", playlist_name)
-        playlist_response = requests.post(playlist_url, json=playlist_payload, headers=headers)
-        playlist_response.raise_for_status()
-        playlist_id = playlist_response.json().get('id')
-        logging.info("Playlist created successfully: ID=%s", playlist_id)
-        if not playlist_id:
-            logging.error("Failed to create playlist: response=%s", playlist_response.json())
-            return jsonify({'error': 'Failed to create playlist'}), 400
-    except requests.exceptions.RequestException as e:
-        logging.error("Error creating playlist: %s", str(e))
-        return jsonify({'error': f'Failed to create playlist: {str(e)}'}), 400
-
+    
     # 4. Добавить треки в плейлист
     add_tracks_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     add_tracks_payload = {"uris": track_uris}
