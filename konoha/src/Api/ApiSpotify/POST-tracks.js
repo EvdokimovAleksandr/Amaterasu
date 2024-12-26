@@ -5,7 +5,7 @@ export async function postRequestSpotifyAddTracks({ accessToken, playlistName, t
     `/api/create_playlist_with_tracks`,
     {
       playlist_name: playlistName,
-      tracks: tracks.slice(0, 100),
+      tracks: tracks.slice(0, 150), // Это указание на то сколько треков перенести, сейчас указываю ограничение чтобы не растянуть видео
     },
     {
       headers: {

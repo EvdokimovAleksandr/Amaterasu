@@ -154,6 +154,7 @@ def create_playlist_with_tracks():
     # 3. Поиск URI треков
     search_url = "https://api.spotify.com/v1/search"
     track_uris = []
+    not_found_tracks = []  # Для треков, которые не нашлись
 
     for track in tracks:
         query = f"{track['title']} artist:{track['artists']}"
@@ -174,9 +175,15 @@ def create_playlist_with_tracks():
                 logging.info("Track found: %s", track_uri)
             else:
                 logging.warning("No results found for track: %s by %s", track['title'], track['artists'])
+                not_found_tracks.append(track)  # Добавляем в список не найденных треков
         except requests.exceptions.RequestException as e:
             logging.error("Error searching for track %s by %s: %s", track['title'], track['artists'], str(e))
-            continue  # Переходим к следующему треку
+            not_found_tracks.append(track)
+            continue
+
+    if not track_uris:
+        logging.error("No tracks found for the given input.")
+        return jsonify({'error': 'No tracks found for the given input', 'not_found_tracks': not_found_tracks}), 400
 
         # time.sleep(0.1)  # Минимизируем риск превышения лимита запросов
 
@@ -187,18 +194,27 @@ def create_playlist_with_tracks():
     
     # 4. Добавить треки в плейлист
     add_tracks_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
-    add_tracks_payload = {"uris": track_uris}
+    CHUNK_SIZE = 90  # Ограничение на 100, используем 90 для безопасности
 
-    try:
-        logging.info("Adding tracks to playlist: %s", playlist_id)
-        add_tracks_response = requests.post(add_tracks_url, json=add_tracks_payload, headers=headers)
-        add_tracks_response.raise_for_status()
-        logging.info("Tracks added successfully to playlist: %s", playlist_id)
-    except requests.exceptions.RequestException as e:
-        logging.error("Error adding tracks to playlist: %s", str(e))
-        return jsonify({'error': f'Failed to add tracks: {str(e)}'}), 400
+    for i in range(0, len(track_uris), CHUNK_SIZE):
+        chunk = track_uris[i:i + CHUNK_SIZE]
+        add_tracks_payload = {"uris": chunk}
 
-    return jsonify({'message': 'Playlist created and tracks added successfully', 'playlist_id': playlist_id})
+        try:
+            logging.info("Adding tracks to playlist: %s, chunk size: %d", playlist_id, len(chunk))
+            add_tracks_response = requests.post(add_tracks_url, json=add_tracks_payload, headers=headers)
+            add_tracks_response.raise_for_status()
+            logging.info("Tracks added successfully to playlist: %s", playlist_id)
+        except requests.exceptions.RequestException as e:
+            logging.error("Error adding tracks to playlist: %s", str(e))
+            logging.error("Spotify API response: %s", add_tracks_response.json() if add_tracks_response else "No response")
+            return jsonify({'error': f'Failed to add tracks: {str(e)}'}), 400
+
+    return jsonify({
+        'message': 'Playlist created and tracks added successfully',
+        'playlist_id': playlist_id,
+        'not_found_tracks': not_found_tracks
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
